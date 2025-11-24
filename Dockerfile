@@ -6,10 +6,6 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Pre-download the JoyCaption model during build
-RUN python -c "from transformers import AutoProcessor, LlavaForConditionalGeneration; \
-    AutoProcessor.from_pretrained('fancyfeast/llama-joycaption-alpha-two-hf-llava'); \
-    LlavaForConditionalGeneration.from_pretrained('fancyfeast/llama-joycaption-alpha-two-hf-llava')"
 
 # Copy handler
 COPY handler.py .
