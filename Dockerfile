@@ -6,9 +6,6 @@ WORKDIR /app
 COPY requirements-server.txt .
 RUN pip install --no-cache-dir -r requirements-server.txt
 
-# Pre-download the JoyCaption model during build (download files only, don't load into memory)
-RUN huggingface-cli download fancyfeast/llama-joycaption-alpha-two-hf-llava
-
 # Copy handler
 COPY handler.py .
 
