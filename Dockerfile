@@ -6,6 +6,13 @@ WORKDIR /app
 COPY requirements-server.txt .
 RUN pip install --no-cache-dir -r requirements-server.txt
 
+# Pre-download the JoyCaption model during build (with proper Python 3 and PyTorch 2.4)
+RUN python3 -c "from transformers import AutoProcessor, LlavaForConditionalGeneration; \
+    print('Downloading model...'); \
+    AutoProcessor.from_pretrained('fancyfeast/llama-joycaption-alpha-two-hf-llava'); \
+    LlavaForConditionalGeneration.from_pretrained('fancyfeast/llama-joycaption-alpha-two-hf-llava'); \
+    print('Model downloaded successfully!')"
+
 # Copy handler
 COPY handler.py .
 
