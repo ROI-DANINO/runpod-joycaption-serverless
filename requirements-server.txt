@@ -1,0 +1,7 @@
+torch>=2.1.0
+transformers>=4.35.0
+accelerate
+safetensors
+huggingface_hub
+runpod
+Pillow
