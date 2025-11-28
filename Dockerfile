@@ -1,20 +1,23 @@
-FROM runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04
+# שינינו מ-runtime ל-devel כדי שיהיו כלים לקמפל את הספריות
+FROM pytorch/pytorch:2.1.0-cuda11.8-cudnn8-devel
 
 WORKDIR /app
 
-# Install Python dependencies
-COPY requirements-server.txt .
-RUN pip install --no-cache-dir -r requirements-server.txt
+# הוספתי build-essential כדי למנוע שגיאות התקנה
+RUN apt-get update && apt-get install -y \
+    git \
+    wget \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
 
-# Pre-download the JoyCaption model during build (with proper Python 3 and PyTorch 2.4)
-RUN python3 -c "from transformers import AutoProcessor, LlavaForConditionalGeneration; \
-    print('Downloading model...'); \
-    AutoProcessor.from_pretrained('fancyfeast/llama-joycaption-alpha-two-hf-llava'); \
-    LlavaForConditionalGeneration.from_pretrained('fancyfeast/llama-joycaption-alpha-two-hf-llava'); \
-    print('Model downloaded successfully!')"
+COPY requirements.txt .
 
-# Copy handler
+# שדרוג pip לפני ההתקנה (פותר הרבה בעיות)
+RUN pip install --upgrade pip
+RUN pip install --no-cache-dir -r requirements.txt
+
+RUN git clone https://github.com/fpgaminer/joycaption.git
+
 COPY handler.py .
 
-# Set entrypoint
-CMD ["python3", "-u", "handler.py"]
+CMD [ "python", "-u", "handler.py" ]
